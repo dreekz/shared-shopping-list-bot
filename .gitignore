@@ -60,3 +60,9 @@ log/
 .python-version
 *.db
 *.sqlite3
+.coverage
+htmlcov/
+.pytest_cache/
+*.bak
+.env.local
+.env.*.local
