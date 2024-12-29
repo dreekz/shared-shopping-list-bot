@@ -1,0 +1,22 @@
+```txt
+# Bot Framework
+python-telegram-bot==20.5
+python-dotenv==1.0.0
+
+# AWS
+boto3==1.28.41
+aws-lambda-powertools==2.15.0
+
+# Utilities
+requests==2.31.0
+urllib3==1.26.15
+pytz==2023.3
+python-json-logger==2.0.7
+
+# Development Dependencies
+pytest==7.4.0
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+black==23.7.0
+isort==5.12.0
+flake8==6.1.0

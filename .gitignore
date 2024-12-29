@@ -1,0 +1,62 @@
+# Python virtual environment
+.venv/
+venv/
+ENV/
+
+# Python byte-compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+
+# Environment variables
+.env
+*.env
+
+# VSCode
+.vscode/
+*.code-workspace
+.history/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfbackup
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Lambda deployment packages
+*.zip
+lambda_function.zip
+
+# AWS credentials
+.aws/
+credentials
+config
+
+# IDE
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+logs/
+log/
+
+# Local development
+.python-version
+*.db
+*.sqlite3

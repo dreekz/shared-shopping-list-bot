@@ -1,7 +1,11 @@
-variable "oidc_role_arn" {
-      description = "arn:aws:iam::891377295987:role/github-actions-oidc-role"
-    }
+variable "aws_access_key" {
+   description = "AKIA47CR2EJZWA7VKYOH"
+}
 
-    variable "oidc_provider_url" {
-        description = "The URL of the OIDC provider"
-    }
+variable "aws_secret_key" {
+   description = "DqIYLcVOg9oXWPO3Reyff+MndsrOequgAm2U2+7W"
+}
+
+variable "oidc_role_arn" {
+ description = "The ARN of the IAM role to assume"
+}
