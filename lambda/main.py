@@ -17,11 +17,11 @@ users_table = dynamodb.Table(os.environ.get('USERS_TABLE', 'lists_users'))
 def lambda_handler(event: Dict[str, Any], context: LambdaContext) -> Dict[str, Any]:
     """
     Main Lambda handler for shopping list operations.
-    
+
     Args:
         event: API Gateway event
         context: Lambda context
-    
+
     Returns:
         API Gateway response
     """
@@ -29,7 +29,11 @@ def lambda_handler(event: Dict[str, Any], context: LambdaContext) -> Dict[str, A
         # Parse request body
         body = json.loads(event.get('body', '{}'))
         user_id = str(body.get('user_id'))
-        
+
+        # Input validation: Check if user_id is provided
+        if not user_id:
+            return create_response(400, {'message': 'User ID is required'})
+
         # Verify user authorization
         if not is_user_authorized(user_id):
             return create_response(403, {'message': 'Unauthorized access'})
@@ -37,7 +41,7 @@ def lambda_handler(event: Dict[str, Any], context: LambdaContext) -> Dict[str, A
         # Handle different operations
         if 'action' in body and body['action'] == 'add_user':
             return handle_add_user(body)
-            
+
         if event.get('httpMethod') == 'GET':
             return handle_list_items()
         elif event.get('httpMethod') == 'POST':
@@ -76,6 +80,8 @@ def handle_list_items() -> Dict[str, Any]:
 def handle_add_item(body: Dict[str, Any]) -> Dict[str, Any]:
     """Handle POST request to add an item."""
     item_name = body.get('item_name')
+
+    # Input validation: Check if item_name is provided
     if not item_name:
         return create_response(400, {'message': 'Item name is required'})
 
@@ -85,7 +91,7 @@ def handle_add_item(body: Dict[str, Any]) -> Dict[str, Any]:
             FilterExpression=Key('item_name').eq(item_name)
         )
         if existing_items.get('Items'):
-            return create_response(409, {'message': 'Item already exists'})
+            return create_response(409, {'message': f'Item {item_name} already exists'})
 
         # Add new item
         table.put_item(Item={
@@ -93,7 +99,7 @@ def handle_add_item(body: Dict[str, Any]) -> Dict[str, Any]:
             'item_name': item_name,
             'added_by': body.get('user_id')
         })
-        return create_response(201, {'message': 'Item added successfully'})
+        return create_response(201, {'message': f'Item {item_name} added successfully'})
     except Exception as e:
         logger.error(f'Error adding item: {str(e)}')
         return create_response(500, {'message': 'Error adding item'})
@@ -111,12 +117,12 @@ def handle_remove_item(body: Dict[str, Any]) -> Dict[str, Any]:
             FilterExpression=Key('item_name').eq(item_name)
         )
         if not existing_items.get('Items'):
-            return create_response(404, {'message': 'Item not found'})
+            return create_response(404, {'message': f'Item {item_name} not found'})
 
         # Delete the item
         item_id = existing_items['Items'][0]['list_id']
         table.delete_item(Key={'list_id': item_id})
-        return create_response(200, {'message': 'Item removed successfully'})
+        return create_response(200, {'message': f'Item {item_name} removed successfully'})
     except Exception as e:
         logger.error(f'Error removing item: {str(e)}')
         return create_response(500, {'message': 'Error removing item'})
@@ -133,13 +139,18 @@ def handle_add_user(body: Dict[str, Any]) -> Dict[str, Any]:
         if not admin_response.get('Item', {}).get('is_admin', False):
             return create_response(403, {'message': 'Only admins can add users'})
 
+        # Input validation: Check if new_user_id is provided
+        if not new_user_id:
+            return create_response(400, {'message': 'New user ID is required'})
+
+
         # Add new user
         users_table.put_item(Item={
             'user_id': new_user_id,
             'is_admin': False,
             'added_by': admin_id
         })
-        return create_response(201, {'message': 'User added successfully'})
+        return create_response(201, {'message': f'User {new_user_id} added successfully'})
     except Exception as e:
         logger.error(f'Error adding user: {str(e)}')
         return create_response(500, {'message': 'Error adding user'})
